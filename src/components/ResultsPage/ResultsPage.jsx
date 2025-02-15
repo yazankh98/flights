@@ -11,6 +11,8 @@ function ResultsPage() {
     const date = queryParams.get("date");
 
     useEffect(() => {
+        console.log(from);
+        
         const fetchFlights = async () => {
             try {
                 const options = {
