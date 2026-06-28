@@ -7,9 +7,10 @@ function HomePage() {
     const [to, setTo] = useState("");
     const [date, setDate] = useState("");
     const navigate = useNavigate();
+
     const handleSearch = () => {
         if (from && to && date) {
-            navigate(/results?from=${from}&to=${to}&date=${date});
+            navigate(`/results?from=${from}&to=${to}&date=${date}`);
         }
     };
 
@@ -20,7 +21,7 @@ function HomePage() {
                     Fly with Us
                 </h1>
                 <p className="text-gray-600 text-center mb-8">Discover your next adventure</p>
-                
+
                 <div className="space-y-6">
                     <div className="relative group">
                         <FaPlaneDeparture className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-500 group-hover:text-blue-600 transition-colors" />
@@ -32,7 +33,7 @@ function HomePage() {
                             className="w-full p-4 pl-12 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all placeholder-gray-400 hover:border-gray-300"
                         />
                     </div>
-                    
+
                     <div className="relative group">
                         <FaPlaneArrival className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-500 group-hover:text-purple-600 transition-colors" />
                         <input
@@ -43,7 +44,7 @@ function HomePage() {
                             className="w-full p-4 pl-12 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none transition-all placeholder-gray-400 hover:border-gray-300"
                         />
                     </div>
-                    
+
                     <div className="relative group">
                         <FaCalendarAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-pink-500 group-hover:text-pink-600 transition-colors" />
                         <input
