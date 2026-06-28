@@ -1,176 +1,76 @@
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
-import {
-  FaPlaneDeparture,
-  FaPlaneArrival,
-  FaCalendarAlt,
-  FaClock,
-  FaArrowLeft,
-} from "react-icons/fa";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaPlaneDeparture, FaPlaneArrival, FaCalendarAlt, FaSearch } from "react-icons/fa";
 
-function ResultsPage() {
-  const [flights, setFlights] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const queryParams = new URLSearchParams(location.search);
-  const from = queryParams.get("from");
-  const to = queryParams.get("to");
-  const date = queryParams.get("date");
-
-  useEffect(() => {
-    const fetchFlights = async () => {
-      setLoading(true);
-      setError("");
-
-      try {
-        const options = {
-          method: "GET",
-          url: "https://sky-scrapper.p.rapidapi.com/api/v1/flights/searchFlights",
-          params: {
-            from,
-            to,
-            date,
-          },
-          headers: {
-            "X-RapidAPI-Key": "PUT_YOUR_RAPIDAPI_KEY_HERE",
-            "X-RapidAPI-Host": "sky-scrapper.p.rapidapi.com",
-          },
-        };
-
-        const response = await axios.request(options);
-        setFlights(response.data.flights || []);
-      } catch (error) {
-        console.error("Error fetching flights:", error);
-        setError("Something went wrong while loading flights.");
-      } finally {
-        setLoading(false);
-      }
+function HomePage() {
+    const [from, setFrom] = useState("");
+    const [to, setTo] = useState("");
+    const [date, setDate] = useState("");
+    const navigate = useNavigate();
+    const handleSearch = () => {
+        if (from && to && date) {
+            navigate(/results?from=${from}&to=${to}&date=${date});
+        }
     };
 
-    if (from && to && date) {
-      fetchFlights();
-    } else {
-      setLoading(false);
-      setError("Missing search details. Please try again.");
-    }
-  }, [from, to, date]);
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-300 flex flex-col items-center justify-center p-6">
+            <div className="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-10 w-full max-w-md transform hover:scale-[1.02] transition-all duration-300">
+                <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-8 text-center">
+                    Fly with Us
+                </h1>
+                <p className="text-gray-600 text-center mb-8">Discover your next adventure</p>
+                
+                <div className="space-y-6">
+                    <div className="relative group">
+                        <FaPlaneDeparture className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-500 group-hover:text-blue-600 transition-colors" />
+                        <input
+                            type="text"
+                            placeholder="From (e.g. DXB)"
+                            value={from}
+                            onChange={(e) => setFrom(e.target.value)}
+                            className="w-full p-4 pl-12 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all placeholder-gray-400 hover:border-gray-300"
+                        />
+                    </div>
+                    
+                    <div className="relative group">
+                        <FaPlaneArrival className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-500 group-hover:text-purple-600 transition-colors" />
+                        <input
+                            type="text"
+                            placeholder="To (e.g. JFK)"
+                            value={to}
+                            onChange={(e) => setTo(e.target.value)}
+                            className="w-full p-4 pl-12 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none transition-all placeholder-gray-400 hover:border-gray-300"
+                        />
+                    </div>
+                    
+                    <div className="relative group">
+                        <FaCalendarAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-pink-500 group-hover:text-pink-600 transition-colors" />
+                        <input
+                            type="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                            className="w-full p-4 pl-12 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-pink-100 focus:border-pink-400 outline-none transition-all hover:border-gray-300"
+                        />
+                    </div>
 
-  return (
-    <main className="min-h-screen bg-slate-50 px-6 py-10">
-      <div className="max-w-6xl mx-auto">
-        <button
-          onClick={() => navigate("/")}
-          className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition"
-        >
-          <FaArrowLeft />
-          Back to search
-        </button>
+                    <button
+                        onClick={handleSearch}
+                        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2 group"
+                    >
+                        <FaSearch className="group-hover:scale-110 transition-transform" />
+                        <span>Search Flights</span>
+                    </button>
+                </div>
 
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-900 text-center mb-3">
-            Flight Results
-          </h1>
-          <p className="text-center text-slate-500">
-            Available flights based on your selected route.
-          </p>
-        </div>
-
-        <section className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 mb-8">
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="flex items-center gap-3 bg-slate-50 rounded-xl p-4">
-              <FaPlaneDeparture className="text-sky-600" />
-              <div>
-                <p className="text-sm text-slate-500">From</p>
-                <p className="font-semibold text-slate-900">{from}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 bg-slate-50 rounded-xl p-4">
-              <FaPlaneArrival className="text-indigo-600" />
-              <div>
-                <p className="text-sm text-slate-500">To</p>
-                <p className="font-semibold text-slate-900">{to}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 bg-slate-50 rounded-xl p-4">
-              <FaCalendarAlt className="text-rose-500" />
-              <div>
-                <p className="text-sm text-slate-500">Date</p>
-                <p className="font-semibold text-slate-900">{date}</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {loading && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-10 text-center">
-            <p className="text-slate-600 font-medium">Loading flights...</p>
-          </div>
-        )}
-
-        {!loading && error && (
-          <div className="bg-white border border-red-200 rounded-2xl p-10 text-center">
-            <p className="text-red-600 font-medium">{error}</p>
-          </div>
-        )}
-
-        {!loading && !error && flights.length > 0 && (
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {flights.map((flight, index) => (
-              <article
-                key={index}
-                className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 hover:shadow-md transition"
-              >
-                <div className="flex items-start justify-between gap-4 mb-5">
-                  <div>
-                    <h3 className="text-xl font-semibold text-slate-900">
-                      {flight.airline || "Airline"}
-                    </h3>
-                    <p className="text-sm text-slate-500">
-                      Flight option #{index + 1}
+                <div className="mt-8 text-center">
+                    <p className="text-sm text-gray-500">
+                        ✨ Special offers available for selected destinations
                     </p>
-                  </div>
-
-                  <span className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-sm font-semibold">
-                    ${flight.price || "N/A"}
-                  </span>
                 </div>
-
-                <div className="space-y-3 text-slate-600">
-                  <div className="flex items-center gap-3">
-                    <FaClock className="text-slate-400" />
-                    <p>Departure: {flight.departureTime || "N/A"}</p>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <FaClock className="text-slate-400" />
-                    <p>Arrival: {flight.arrivalTime || "N/A"}</p>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
-
-        {!loading && !error && flights.length === 0 && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-10 text-center">
-            <h2 className="text-xl font-semibold text-slate-900 mb-2">
-              No flights found
-            </h2>
-            <p className="text-slate-500">
-              Try changing the airport codes or choosing another date.
-            </p>
-          </div>
-        )}
-      </div>
-    </main>
-  );
+            </div>
+        </div>
+    );
 }
 
-export default ResultsPage;
+export default HomePage;
